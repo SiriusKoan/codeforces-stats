@@ -1,0 +1,1 @@
+[![Status](https://siriuskoan.github.io/codeforces-stats/?handle=tourist)](https://siriuskoan.github.io/codeforces-stats/?handle=tourist)

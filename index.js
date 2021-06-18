@@ -1,40 +1,64 @@
 const cf_api_url = "https://codeforces.com/api/user.info?handles="
-var parameters = new URLSearchParams(window.location.search);
-const handle = parameters.get("handle");
-const theme = parameters.get("theme");
-const use_contributions = parameters.get("contributions") == "true" ? true : false;
-const use_friends = parameters.get("friends") == "true" ? true : false;
+const svg_template = `
+<svg xmlns="http://www.w3.org/2000/svg" class="card" width="500" height="200" viewBox="0 0 500 200" fill="none">
+    <script src="index.js"></script>
+    <g>
+        <text id="rank" x="0" y="20" fill="black"></text>
+        <text id="handle" x="0" y="50" fill="black" font-size="30px" font-family="PT Serif"></text>
+        <text id="org" x="0" y="70" fill="black"></text>
+    </g>
+    <g>
+        <text id="rating" fill="black"></text>
+        <text id="max_rating" fill="black"></text>
+        <text id="contributions" fill="black"></text>
+        <text id="friends" fill="black"></text>
+    </g>
+</svg>`;
 
-window.onload = makeCard(handle, theme, use_contributions, use_friends)
+addEventListener("fetch", (event) => {
+	event.respondWith(
+		makeCard(event.request).catch(
+			(err) => new Response(err.stack, { status: 500 })
+		)
+	);
+});
 
-async function makeCard(handle, theme, use_contributions, use_friends) {
-	var url = cf_api_url + handle;
+async function makeCard(request) {
+	var parameters = new URLSearchParams(new URL(request.url).searchParams);
+	let handle = parameters.get("handle");
+	let theme = parameters.get("theme");
+	let use_contributions = parameters.get("contributions") == "true" ? true : false;
+	let use_friends = parameters.get("friends") == "true" ? true : false;
+	let url = cf_api_url + handle;
 	const response = await fetch(url);
 	const json = await response.json();
 	console.log(json);
 	if (json["status"] == "OK") {
-		make(json["result"][0], theme, use_contributions, use_friends);
+		return make(json["result"][0], theme, use_contributions, use_friends);
 	}
 }
 
 
 function make(json, theme, use_contributions, use_friends) {
-	var rank = document.getElementById("rank");
-	rank.textContent = json["rank"];
-	var handle = document.getElementById("handle");
-	handle.textContent = json["handle"];
-	var org = document.getElementById("org");
-	org.textContent = json["organization"];
-	var rating = document.getElementById("rating");
-	rating.textContent = json["rating"];
-	var max_rating = document.getElementById("max_rating");
-	max_rating.textContent = json["maxRating"];
-	if (use_contributions) {
-		var contributions = document.getElementById("contributions");
-		contributions.textContent = json["contributions"];
-	}
-	if (use_friends) {
-		var friends = document.getElementById("friends");
-		friends.textContent = json["friends"];
-	}
+	svg = `
+  <svg xmlns="http://www.w3.org/2000/svg" class="card" width="500" height="200" viewBox="0 0 500 200" fill="none">
+      <script src="index.js"></script>
+      <g>
+          <text id="rank" x="0" y="20" fill="black">${json["rank"]}</text>
+          <text id="handle" x="0" y="50" fill="black" font-size="30px" font-family="PT Serif">${json["handle"]}</text>
+          <text id="org" x="0" y="70" fill="black">${json["organization"]}</text>
+      </g>
+      <g>
+          <text id="rating" fill="black">${json["rating"]}</text>
+          <text id="max_rating" fill="black">${json["maxRating"]}</text>
+          <text id="contributions" fill="black">${json["contributions"]}</text>
+          <text id="friends" fill="black">${json["friends"]}</text>
+      </g>
+  </svg>`;
+	return new Response(svg, {
+		headers: {
+			"Content-Type": "text/html; charset=utf-8",
+		},
+	});
 }
+
