@@ -1,19 +1,4 @@
 const cf_api_url = "https://codeforces.com/api/user.info?handles="
-const svg_template = `
-<svg xmlns="http://www.w3.org/2000/svg" class="card" width="500" height="200" viewBox="0 0 500 200" fill="none">
-    <script src="index.js"></script>
-    <g>
-        <text id="rank" x="0" y="20" fill="black"></text>
-        <text id="handle" x="0" y="50" fill="black" font-size="30px" font-family="PT Serif"></text>
-        <text id="org" x="0" y="70" fill="black"></text>
-    </g>
-    <g>
-        <text id="rating" fill="black"></text>
-        <text id="max_rating" fill="black"></text>
-        <text id="contributions" fill="black"></text>
-        <text id="friends" fill="black"></text>
-    </g>
-</svg>`;
 
 addEventListener("fetch", (event) => {
     event.respondWith(
@@ -44,20 +29,31 @@ async function makeCard(request) {
 
 function make(json, theme, use_contributions, use_friends) {
     svg = `
-  <svg xmlns="http://www.w3.org/2000/svg" class="card" width="500" height="200" viewBox="0 0 500 200" fill="none">
-      <script src="index.js"></script>
-      <g>
-          <text id="rank" x="0" y="20" fill="black">${json["rank"]}</text>
-          <text id="handle" x="0" y="50" fill="black" font-size="30px" font-family="PT Serif">${json["handle"]}</text>
-          <text id="org" x="0" y="70" fill="black">${json["organization"]}</text>
-      </g>
-      <g>
-          <text id="rating" fill="black">${json["rating"]}</text>
-          <text id="max_rating" fill="black">${json["maxRating"]}</text>
-          <text id="contributions" fill="black">${use_contributions ? json["contributions"] : ""}</text>
-          <text id="friends" fill="black">${use_friends ? json["friends"] : ""}</text>
-      </g>
-  </svg>`;
+    <svg xmlns="http://www.w3.org/2000/svg" class="card" width="500" height="200" viewBox="0 0 500 200" fill="none">
+        <defs>
+            <style type="text/css">
+                @import url('https://fonts.googleapis.com/css2?family=Oswald:wght@400amp;&display=swap');
+
+                text {
+                    font-family: Oswald;
+                }
+            </style>
+        </defs>
+        <script src="index.js"></script>
+        <g>
+            <text id="rank" x="30" y="40" fill="black" font-size="20px">${json["rank"]}</text>
+            <text id="handle" x="30" y="85" fill="black" font-size="30px">${json["handle"]}</text>
+            <text id="org" x="30" y="170" fill="black" font-size="15px">${json["organization"]}</text>
+        </g>
+        <g>
+            <text id="rating" x="300" y="50" fill="black" font-size="20px">Current Rating: ${json["rating"]}</text>
+            <text id="max_rating" x="300" y="85" fill="black" font-size="17px">Max Rating: ${json["maxRating"]}</text>
+            <text id="contributions" x="300" y="150" fill="black" font-size="15px">${use_contributions ? "Contributions: " +
+                json["contribution"] : ""}</text>
+            <text id="friends" x="300" y="180" fill="black" font-size="15px">${use_friends ? "Friends: " + json["friendOfCount"] :
+                ""}</text>
+        </g>
+    </svg>`;
     return new Response(svg, {
         headers: {
             "Content-Type": "image/svg+xml; charset=utf-8",
