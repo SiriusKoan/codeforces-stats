@@ -1,4 +1,17 @@
 const cf_api_url = "https://codeforces.com/api/user.info?handles="
+const colors = {
+    "newbie": "gray",
+    "pupil": "rgb(136,204,34)",
+    "apprentice": "green",
+    "specialist": "rgb(3,168,158)",
+    "expert": "blue",
+    "candidate master": "rgb(170,0,170)",
+    "master": "rgb(255,140,0)",
+    "international master": "rgb(255,140,0)",
+    "grandmaster": "red",
+    "international grandmaster": "red",
+    "legendary grandmaster": "red",
+}
 
 addEventListener("fetch", (event) => {
     event.respondWith(
@@ -11,7 +24,6 @@ addEventListener("fetch", (event) => {
 async function makeCard(request) {
     var parameters = new URLSearchParams(new URL(request.url).searchParams);
     let handle = parameters.get("handle");
-    let theme = parameters.get("theme");
     let use_contributions = parameters.get("contributions") == "true" ? true : false;
     let use_friends = parameters.get("friends") == "true" ? true : false;
     let url = cf_api_url + handle;
@@ -19,7 +31,7 @@ async function makeCard(request) {
     const json = await response.json();
     console.log(json);
     if (json["status"] == "OK") {
-        return make(json["result"][0], theme, use_contributions, use_friends);
+        return make(json["result"][0], use_contributions, use_friends);
     }
     else {
         return new Response("Not found", { status: 404 })
@@ -27,15 +39,23 @@ async function makeCard(request) {
 }
 
 
-function make(json, theme, use_contributions, use_friends) {
+function make(json, use_contributions, use_friends) {
     svg = `
-    <svg xmlns="http://www.w3.org/2000/svg" class="card" width="500" height="200" viewBox="0 0 500 200" fill="none">
+    <svg xmlns="http://www.w3.org/2000/svg" width="500" height="200" viewBox="0 0 500 200"  style="background-color: #fffafa;">
         <defs>
             <style type="text/css">
                 @import url('https://fonts.googleapis.com/css2?family=Oswald:wght@400amp;&display=swap');
 
                 text {
                     font-family: Oswald;
+                }
+
+                #rank, #handle, #rating {
+                    fill: ${colors[json["rank"]]};
+                }
+
+                #max {
+                    fill: ${colors[json["maxRank"]]};
                 }
             </style>
         </defs>
@@ -46,12 +66,10 @@ function make(json, theme, use_contributions, use_friends) {
             <text id="org" x="30" y="170" fill="black" font-size="15px">${json["organization"]}</text>
         </g>
         <g>
-            <text id="rating" x="300" y="50" fill="black" font-size="20px">Current Rating: ${json["rating"]}</text>
-            <text id="max_rating" x="300" y="85" fill="black" font-size="17px">Max Rating: ${json["maxRating"]}</text>
-            <text id="contributions" x="300" y="150" fill="black" font-size="15px">${use_contributions ? "Contributions: " +
-                json["contribution"] : ""}</text>
-            <text id="friends" x="300" y="180" fill="black" font-size="15px">${use_friends ? "Friends: " + json["friendOfCount"] :
-                ""}</text>
+            <text id="rating" x="270" y="50" fill="black" font-size="20px">Current Rating: ${json["rating"]}</text>
+            <text id="max" x="270" y="85" fill="black" font-size="17px">Max: ${json["maxRank"]}, ${json["maxRating"]}</text>
+            <text id="contributions" x="270" y="150" fill="black" font-size="15px">${use_contributions ? "Contributions: " + json["contribution"] : ""}</text>
+            <text id="friends" x="270" y="180" fill="black" font-size="15px">${use_friends ? "Friends: " + json["friendOfCount"] : ""}</text>
         </g>
     </svg>`;
     return new Response(svg, {
