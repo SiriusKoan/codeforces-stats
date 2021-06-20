@@ -46,7 +46,7 @@ async function makeCard(request) {
 
 function make(json, theme, use_contributions, use_friends) {
     svg = `
-    <svg xmlns="http://www.w3.org/2000/svg" width="500" height="200" viewBox="0 0 500 200">
+    <svg xmlns="http://www.w3.org/2000/svg" width="550" height="200" viewBox="0 0 500 200">
         <defs>
             <style type="text/css">
                 @import url('https://fonts.googleapis.com/css2?family=Roboto+Condensed&amp;display=swap');
@@ -70,9 +70,9 @@ function make(json, theme, use_contributions, use_friends) {
         </defs>
         <script src="index.js"></script>
         <g>
-            <text id="rank" x="30" y="40" fill="black" font-size="20px">${json["rank"]}</text>
-            <text id="handle" x="30" y="85" fill="black" font-size="30px"><tspan>${json["handle"][0]}</tspan>${json["handle"].slice(1)}</text>
-            <text id="org" x="30" y="170" fill="black" font-size="15px">${json["organization"]}</text>
+            <text id="rank" x="15" y="40" fill="black" font-size="20px">${json["rank"]}</text>
+            <text id="handle" x="15" y="85" fill="black" font-size="30px"><tspan>${json["handle"][0]}</tspan>${json["handle"].slice(1)}</text>
+            <text id="org" x="15" y="170" fill="black" font-size="15px">${json["organization"]}</text>
         </g>
         <g>
             <text id="rating" x="270" y="50" fill="black" font-size="20px">Rating: ${json["rating"]}</text>

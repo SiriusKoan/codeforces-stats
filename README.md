@@ -1,5 +1,6 @@
 # Codeforces Stats
-A tool helps you show CF stat.
+A tool helps you show CF stat.  
+Inspired by [LeetCode-Stats-Card](https://github.com/JacobLinCool/LeetCode-Stats-Card).
 
 # Parameter
 parameter     | default | required
