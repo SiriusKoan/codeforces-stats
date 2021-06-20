@@ -12,6 +12,10 @@ const colors = {
     "international grandmaster": "red",
     "legendary grandmaster": "red",
 }
+const theme_color = {
+    "default": "svg{background-color:#fffafa}text{fill:black}",
+    "dark": "svg{background-color:#3B3B3B}text{fill:white}",
+}
 
 addEventListener("fetch", (event) => {
     event.respondWith(
@@ -26,12 +30,13 @@ async function makeCard(request) {
     let handle = parameters.get("handle");
     let use_contributions = parameters.get("contributions") == "true" ? true : false;
     let use_friends = parameters.get("friends") == "true" ? true : false;
+    let theme = parameters.get("theme") ? parameters.get("theme") : "default";
     let url = cf_api_url + handle;
     const response = await fetch(url);
     const json = await response.json();
     console.log(json);
     if (json["status"] == "OK") {
-        return make(json["result"][0], use_contributions, use_friends);
+        return make(json["result"][0], theme, use_contributions, use_friends);
     }
     else {
         return new Response("Not found", { status: 404 })
@@ -39,20 +44,18 @@ async function makeCard(request) {
 }
 
 
-function make(json, use_contributions, use_friends) {
+function make(json, theme, use_contributions, use_friends) {
     svg = `
     <svg xmlns="http://www.w3.org/2000/svg" width="500" height="200" viewBox="0 0 500 200">
         <defs>
             <style type="text/css">
-                @import url('https://fonts.googleapis.com/css2?family=Roboto+Condensed&amp;display=swap');   
-                
+                @import url('https://fonts.googleapis.com/css2?family=Roboto+Condensed&amp;display=swap');
+
                 text {
                     font-family: Roboto Condensed;
                 }
 
-                svg {
-                    background-color: #fffafa;
-                }
+                ${theme_color[theme]}
 
                 #rank, #handle, #rating {
                     fill: ${colors[json["rank"]]};
@@ -84,4 +87,3 @@ function make(json, use_contributions, use_friends) {
         },
     });
 }
-
