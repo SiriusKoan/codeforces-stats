@@ -41,18 +41,24 @@ async function makeCard(request) {
 
 function make(json, use_contributions, use_friends) {
     svg = `
-    <svg xmlns="http://www.w3.org/2000/svg" width="500" height="200" viewBox="0 0 500 200"  style="background-color: #fffafa;">
+    <svg xmlns="http://www.w3.org/2000/svg" width="500" height="200" viewBox="0 0 500 200">
         <defs>
             <style type="text/css">
-                @import url('https://fonts.googleapis.com/css2?family=Oswald:wght@400amp;&display=swap');
-
+                @import url('https://fonts.googleapis.com/css2?family=Roboto+Condensed&amp;display=swap');   
+                
                 text {
-                    font-family: Oswald;
+                    font-family: Roboto Condensed;
+                }
+
+                svg {
+                    background-color: #fffafa;
                 }
 
                 #rank, #handle, #rating {
                     fill: ${colors[json["rank"]]};
                 }
+
+                ${json["rank"] == "legendary grandmaster" ? "tspan{fill: black}" : ""}
 
                 #max {
                     fill: ${colors[json["maxRank"]]};
@@ -62,11 +68,11 @@ function make(json, use_contributions, use_friends) {
         <script src="index.js"></script>
         <g>
             <text id="rank" x="30" y="40" fill="black" font-size="20px">${json["rank"]}</text>
-            <text id="handle" x="30" y="85" fill="black" font-size="30px">${json["handle"]}</text>
+            <text id="handle" x="30" y="85" fill="black" font-size="30px"><tspan>${json["handle"][0]}</tspan>${json["handle"].slice(1)}</text>
             <text id="org" x="30" y="170" fill="black" font-size="15px">${json["organization"]}</text>
         </g>
         <g>
-            <text id="rating" x="270" y="50" fill="black" font-size="20px">Current Rating: ${json["rating"]}</text>
+            <text id="rating" x="270" y="50" fill="black" font-size="20px">Rating: ${json["rating"]}</text>
             <text id="max" x="270" y="85" fill="black" font-size="17px">Max: ${json["maxRank"]}, ${json["maxRating"]}</text>
             <text id="contributions" x="270" y="150" fill="black" font-size="15px">${use_contributions ? "Contributions: " + json["contribution"] : ""}</text>
             <text id="friends" x="270" y="180" fill="black" font-size="15px">${use_friends ? "Friends: " + json["friendOfCount"] : ""}</text>
